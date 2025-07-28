@@ -1,0 +1,163 @@
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calculator, Moon, Sun, Eye, EyeOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+  rememberMe: z.boolean().default(false),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
+
+export default function AccountantLogin() {
+  const [, setLocation] = useLocation();
+  const [showPassword, setShowPassword] = useState(false);
+  const { login, isLoading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { toast } = useToast();
+
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "sarah@accountingfirm.co.uk",
+      password: "password123",
+      rememberMe: false,
+    },
+  });
+
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      await login(data.email, data.password);
+      setLocation("/");
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10 px-4">
+      {/* Theme Toggle */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleTheme}
+        className="fixed top-4 right-4 z-50"
+      >
+        {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+      </Button>
+
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-4 text-center">
+          <div className="mx-auto h-12 w-12 bg-primary rounded-lg flex items-center justify-center">
+            <Calculator className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <div>
+            <CardTitle className="text-2xl font-bold">UK Tax Pro</CardTitle>
+            <CardDescription>Accountant Portal</CardDescription>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                {...form.register("email")}
+                className={form.formState.errors.email ? "border-destructive" : ""}
+              />
+              {form.formState.errors.email && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  {...form.register("password")}
+                  className={form.formState.errors.password ? "border-destructive pr-10" : "pr-10"}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+              {form.formState.errors.password && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="rememberMe"
+                  {...form.register("rememberMe")}
+                />
+                <Label htmlFor="rememberMe" className="text-sm">
+                  Remember me
+                </Label>
+              </div>
+              <Button variant="link" className="p-0 h-auto text-sm">
+                Forgot password?
+              </Button>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in to Accountant Portal"}
+            </Button>
+
+            <div className="text-center">
+              <Button
+                variant="link"
+                onClick={() => setLocation("/client/login")}
+                className="text-sm"
+              >
+                Are you a client? Sign in here
+              </Button>
+            </div>
+
+            <div className="text-center pt-4 border-t">
+              <p className="text-sm text-muted-foreground">
+                Need to invite a client?{" "}
+                <Button variant="link" className="p-0 h-auto text-sm font-medium">
+                  Send invitation
+                </Button>
+              </p>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
