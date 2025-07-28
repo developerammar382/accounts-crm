@@ -1,0 +1,118 @@
+# UK Accounting and Taxation Automation Platform - Requirements Document
+
+## Overview
+The platform automates accounting and taxation for UK small businesses (sole traders, partnerships, limited companies) and their accountants. It supports multi-company management, secure document handling with OCR and AI-driven categorization, automated bookkeeping, real-time financial reporting, and compliance with UK regulations (Making Tax Digital, GDPR). The system enables clients to manage financial data and approve tax filings, while accountants oversee client data, review financials, and prepare tax submissions.
+
+## Target Users
+- **Clients (Small Business Owners)**: Manage financial documents, view reports, and approve tax filings for one or more businesses.
+- **Accountants (Super Admins)**: Access all client data, review financials, adjust entries, and prepare/submit tax filings.
+- **System Administrators (Optional)**: Manage platform settings and user access.
+
+## Core Features
+
+### User Authentication and Role-Based Access
+- Secure sign-up/login with email and password.
+- Multi-factor authentication (MFA) for enhanced security.
+- Role-based access:
+  - Clients: Access only their businesses’ data.
+  - Accountants: Access all assigned clients’ data.
+  - Admins: Platform-wide access (optional).
+- Accountants invite clients via email with a secure, time-limited (48-hour) link to join.
+- Clients assign accountants during onboarding or via settings and can revoke access to specific businesses.
+
+### Onboarding Process
+- Collect business details: Company Number, Unique Taxpayer Reference (UTR), VAT registration status (Standard, Flat Rate, Cash Accounting, or Not Registered), business type (sole trader, partnership, limited company).
+- Collect director/owner details: Name, contact details, role.
+- Collect HMRC login credentials or MTD authorization (secure input).
+- Allow upload of prior records (e.g., past accounts) or professional clearance letter from the previous accountant.
+- Validate Company Number (8-digit) and UTR (10-digit) formats.
+- Clients can add and manage multiple businesses under one account.
+- Accountants view and manage all client businesses in a unified dashboard with a dropdown to switch between businesses.
+
+### Document Management
+- Upload financial documents (invoices, receipts, bank statements) in PDF, JPG, or PNG formats (max 50MB per file).
+- OCR extracts key data (e.g., amount, date, supplier, VAT).
+- AI parses OCR-extracted text to categorize data into relevant fields (e.g., expense type, income source) and suggests ledger entries, with manual correction options.
+- Store documents in GDPR-compliant encrypted cloud storage.
+- Organize documents by business, type (e.g., invoice, receipt), and date in a searchable library (search by type, date, or keyword).
+- Clients can share specific documents with accountants.
+
+### Accounting and Bookkeeping
+- Automated double-entry bookkeeping with ledger generation based on AI-categorized data and manual inputs.
+- Predefined UK Chart of Accounts (customizable for sole traders, partnerships, limited companies) with nominal codes aligned with FRS 102.
+- Manual categorization of income/expenses (e.g., sales, utilities, travel) with basic rules-based auto-categorization (e.g., match “British Gas” to utilities).
+- Generate real-time reports: Profit & Loss, Balance Sheet, Cash Flow Statement, Trial Balance, Aged Debtors/Creditors.
+- Export reports as PDF or CSV.
+- Record transactions in multiple currencies with GBP conversion using real-time exchange rates, displaying GBP amounts for reporting.
+
+### Tax Management
+- Calculate MTD-compliant VAT for Standard, Flat Rate, Cash Accounting, and Partial Exemption schemes.
+- Generate VAT returns with a client approval workflow.
+- Export MTD-compliant VAT return files for manual HMRC submission.
+- Record CIS (Construction Industry Scheme) deductions for contractors/subcontractors.
+- Generate CIS monthly returns for manual HMRC submission, tracking CIS suffered and claimed amounts.
+- Accountants review/adjust financial data (e.g., VAT adjustments, disallowable expenses).
+- Clients approve tax filings via a secure in-platform workflow, with status tracking (pending, approved, submitted).
+
+### Dashboards
+- **Client Dashboard**:
+  - Display financial overview per business: revenue, expenses, profit, VAT due, cash flow.
+  - Show recent documents, pending actions (e.g., approve tax filings), and activity logs.
+  - Include visual charts (e.g., bar for income/expenses, line for cash flow trends).
+- **Accountant Dashboard**:
+  - List all clients and their businesses with pending tasks (e.g., review documents, submit VAT).
+  - Provide financial summaries across all clients (e.g., total VAT due, overdue invoices).
+  - Allow one-click switching between client business dashboards.
+
+### Notifications
+- Email/in-platform alerts for clients on accountant actions (e.g., document review, tax filing ready).
+- Email/in-platform alerts for accountants on client actions (e.g., document uploads, approvals).
+- Reminders for tax deadlines (e.g., VAT return, Corporation Tax).
+- Users can enable/disable email or in-platform notifications.
+
+### Activity Logging
+- Track all user actions (e.g., document uploads, ledger entries, tax approvals) with timestamps and user details.
+- Provide an audit trail accessible to clients (for their businesses) and accountants (for all clients).
+- Export audit logs as CSV for compliance.
+
+### Invoicing
+- Create UK-compliant invoices with required fields (e.g., invoice number, VAT rate, company details).
+- Send invoices via email or download as PDF.
+- Track invoice status (sent, paid, overdue) and link payments to ledger entries.
+
+### Additional UK-Specific Features
+- **Dividend Management (for Limited Companies)**:
+  - Record dividend declarations and payments.
+  - Generate dividend vouchers with shareholder name, amount, and tax credit.
+- **Payroll (Basic)**:
+  - Manual input of payroll data (e.g., employee salaries, PAYE, National Insurance).
+  - Generate payslips and track PAYE/NI liabilities for HMRC reporting.
+- **Self-Assessment Support**:
+  - Allow sole traders/partners to input personal income data.
+  - Generate draft Self-Assessment tax calculations for accountant review.
+
+## Non-Functional Requirements
+- **Security**:
+  - GDPR-compliant data handling (encryption in transit and at rest, user consent management, right to erasure).
+  - Secure storage of HMRC credentials (encrypted).
+- **Performance**:
+  - Dashboards load in under 2 seconds.
+  - Process document uploads and OCR/AI categorization within 5 seconds per document.
+- **Scalability**:
+  - Support 1,000 users (clients + accountants), with accountants managing 100 clients, each with multiple businesses.
+- **Usability**:
+  - Responsive web design for desktop and mobile.
+  - Intuitive UI/UX with drag-and-drop uploads and an onboarding wizard.
+- **Compliance**:
+  - MTD-ready VAT calculations and export formats.
+  - Adhere to UK accounting standards (FRS 102) and HMRC requirements for VAT, CIS, PAYE, and Self-Assessment.
+
+## Future Enhancements
+- Import real-time bank transactions via Open Banking.
+- Enhance AI categorization for higher accuracy.
+- Enable direct HMRC API submissions for VAT, CIS, and Corporation Tax.
+- Develop iOS/Android apps for document scanning and dashboard access.
+- Automate payroll with HMRC RTI (Real-Time Information) integration.
+- Provide AI-driven insights (e.g., expense anomaly detection, financial forecasting).
+- Support multi-language options for non-English-speaking UK users.
+- Offer a white-label version for accounting firms.
