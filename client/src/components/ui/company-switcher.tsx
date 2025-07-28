@@ -10,9 +10,8 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Building2, ChevronDown, Plus } from "lucide-react";
-import type { Business } from "@shared/schema";
 
-export default function CompanySwitcher() {
+export function CompanySwitcher() {
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
 
   const { data: businesses = [] } = useQuery({
@@ -31,7 +30,7 @@ export default function CompanySwitcher() {
           <div className="flex items-center space-x-2">
             <Building2 className="h-4 w-4" />
             <span className="truncate">
-              {selectedBusiness?.name || "Select Business"}
+              {selectedBusiness?.companyName || "Select Business"}
             </span>
           </div>
           <ChevronDown className="h-4 w-4 opacity-50" />
@@ -40,14 +39,14 @@ export default function CompanySwitcher() {
       <DropdownMenuContent className="w-[250px]" align="start">
         <DropdownMenuLabel>Your Businesses</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {businesses.map((business: Business) => (
+        {businesses.map((business: any) => (
           <DropdownMenuItem
             key={business.id}
             onClick={() => setSelectedBusiness(business)}
             className={selectedBusiness?.id === business.id ? "bg-accent" : ""}
           >
             <div className="flex flex-col">
-              <span className="font-medium">{business.name}</span>
+              <span className="font-medium">{business.companyName}</span>
               <span className="text-xs text-muted-foreground">
                 {business.businessType?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                 {business.vatScheme !== 'not_registered' && ' • VAT Registered'}
